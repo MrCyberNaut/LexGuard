@@ -53,7 +53,7 @@ export function Hero() {
   }, [displayed, isDeleting, phraseIdx]);
 
   return (
-    <section className="grid-bg min-h-screen pt-14 flex flex-col" id="hero">
+    <section className="grid-bg h-screen pt-14 flex flex-col overflow-hidden" id="hero">
       <style dangerouslySetInnerHTML={{ __html: `
         @keyframes float-gentle {
           0%, 100% { transform: translateY(0px); }
@@ -89,11 +89,11 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="flex-1 max-w-7xl mx-auto w-full px-6 grid md:grid-cols-[4.5fr_5.5fr] gap-0">
+      <div className="flex-1 max-w-7xl mx-auto w-full px-6 grid md:grid-cols-[4.5fr_5.5fr] gap-0 h-full overflow-hidden">
         {/* Left — copy */}
-        <div className="border-r border-[#0e0e0e]/10 py-16 pr-8 flex flex-col justify-center">
+        <div className="border-r border-[#0e0e0e]/10 py-6 pr-8 flex flex-col justify-center h-full">
           {/* Eyebrow */}
-          <div className="flex items-center gap-2 mb-8 fade-up">
+          <div className="flex items-center gap-2 mb-4 fade-up">
             <span className="tag text-[#6b6b6b] border-[#0e0e0e]/20">
               built at google × scaler promptwars
             </span>
@@ -104,12 +104,12 @@ export function Hero() {
             className="fade-up delay-1"
             style={{
               fontFamily: "var(--font-space-grotesk)",
-              fontSize: "clamp(36px, 5vw, 60px)",
+              fontSize: "clamp(32px, 4.2vw, 48px)",
               fontWeight: 700,
-              lineHeight: 1.0,
+              lineHeight: 1.05,
               letterSpacing: "-0.03em",
               color: "var(--ink)",
-              marginBottom: "24px",
+              marginBottom: "16px",
             }}
           >
             Every contract is
@@ -131,11 +131,11 @@ export function Hero() {
           <p
             className="fade-up delay-2"
             style={{
-              fontSize: "16px",
+              fontSize: "14px",
               color: "var(--ink-2)",
-              lineHeight: 1.6,
+              lineHeight: 1.5,
               maxWidth: "420px",
-              marginBottom: "44px", // Increased margin for breathing room
+              marginBottom: "20px",
             }}
           >
             Three AI agents tear open employment contracts, freelance deals,
@@ -150,8 +150,8 @@ export function Hero() {
               background: "var(--void)",
               border: "1px solid rgba(255,255,255,0.08)",
               borderRadius: "4px",
-              padding: "12px 16px",
-              marginBottom: "38px", // Increased margin to prevent cramping CTAs
+              padding: "10px 14px",
+              marginBottom: "20px",
               maxWidth: "400px",
             }}
           >
@@ -177,7 +177,7 @@ export function Hero() {
                 color: "var(--paper)",
                 fontSize: "13px",
                 fontWeight: 600,
-                padding: "11px 22px", // Slightly padded for better click target
+                padding: "11px 22px",
                 borderRadius: "3px",
                 display: "inline-flex",
                 alignItems: "center",
@@ -208,7 +208,7 @@ export function Hero() {
           </div>
 
           {/* Mini stats */}
-          <div className="fade-up delay-5 flex items-center gap-6 mt-12 pt-8 border-t border-[#0e0e0e]/10">
+          <div className="fade-up delay-5 flex items-center gap-6 mt-6 pt-4 border-t border-[#0e0e0e]/10">
             {[
               { n: "3", label: "AI agents" },
               { n: "<10s", label: "analysis time" },
@@ -218,33 +218,33 @@ export function Hero() {
                 <div
                   style={{
                     fontFamily: "var(--font-space-grotesk)",
-                    fontSize: "22px",
+                    fontSize: "18px",
                     fontWeight: 700,
                     color: "var(--ink)",
                     lineHeight: 1,
-                    marginBottom: "3px",
+                    marginBottom: "2px",
                   }}
                 >
                   {s.n}
                 </div>
-                <div className="section-idx">{s.label}</div>
+                <div className="section-idx text-[11px]">{s.label}</div>
               </div>
             ))}
           </div>
         </div>
 
         {/* Right — Lady Justice Image */}
-        <div className="py-16 pl-0 w-full relative flex items-center justify-center pointer-events-none" style={{ marginTop: "-160px" }}> {/* Shifted upwards to touch the top */}
+        <div className="w-full h-full relative flex items-center justify-center pointer-events-none overflow-hidden" style={{ marginTop: "-20px" }}>
           {/* Large soft paper glow behind the statue (blends it seamlessly into background) */}
           <div 
             className="fade-up delay-2"
             style={{
               position: "absolute",
-              bottom: "10%", // Adjusted glow position to match shifted statue
+              bottom: "15%",
               left: "50%",
               transform: "translateX(-50%)",
-              width: "700px", // Giant glow
-              height: "500px", 
+              width: "450px",
+              height: "350px", 
               background: "radial-gradient(circle at bottom, rgba(245,244,240,0.92) 0%, rgba(245,244,240,0.5) 45%, rgba(245,244,240,0) 80%)",
               filter: "blur(40px)",
               zIndex: 0,
@@ -252,11 +252,11 @@ export function Hero() {
           />
           
           <div 
-            className="fade-up delay-3 relative z-10 w-[105%] max-w-[760px] aspect-[3.8/5] drop-shadow-2xl" // Breakout bounds
+            className="fade-up delay-3 relative z-10 w-[85%] max-w-[500px] h-[80%] drop-shadow-2xl"
             style={{
-              marginLeft: "-3%", // Shifts the massive statue to overlap and center perfectly
-              WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 68%, rgba(0,0,0,0) 96%)",
-              maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 68%, rgba(0,0,0,0) 96%)",
+              marginLeft: "-3%",
+              WebkitMaskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 98%)",
+              maskImage: "linear-gradient(to bottom, rgba(0,0,0,1) 75%, rgba(0,0,0,0) 98%)",
             }}
           >
             <div className="float-statue w-full h-full">
@@ -277,8 +277,8 @@ export function Hero() {
             className="fade-up delay-4"
             style={{
               position: "absolute",
-              top: "14%", 
-              left: "-2%", 
+              top: "20%", 
+              left: "10%", 
               zIndex: 20,
             }}
           >
@@ -305,8 +305,8 @@ export function Hero() {
             className="fade-up delay-5"
             style={{
               position: "absolute",
-              top: "54%", 
-              right: "6%", 
+              top: "60%", 
+              right: "12%", 
               zIndex: 20,
             }}
           >
