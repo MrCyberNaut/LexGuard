@@ -4,3 +4,6 @@ node_modules/
 *.key
 graphify-out/
 .DS_Store
+/ascent-website
+/docs
+/assets

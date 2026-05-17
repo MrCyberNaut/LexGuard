@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LexGuard — AI Contract Intelligence</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            zinc: {
+              950: '#09090b',
+              900: '#18181b',
+              800: '#27272a',
+              700: '#3f3f46',
+              600: '#52525b',
+              500: '#71717a',
+              400: '#a1a1aa',
+              300: '#d4d4d8',
+              200: '#e4e4e7',
+              100: '#f4f4f5',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background: #09090b; color: #f4f4f5; font-family: 'Inter', sans-serif; }
+    .card-enter { animation: fadeSlideIn 0.3s ease forwards; }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .loading-dot { animation: pulse 1.4s ease-in-out infinite; }
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes pulse {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+      40% { opacity: 1; transform: scale(1); }
+    }
+    .border-high   { border-left-color: #ef4444; }
+    .border-medium { border-left-color: #f59e0b; }
+    .border-low    { border-left-color: #22c55e; }
+    .pill-high   { background: rgba(239,68,68,0.15); color: #f87171; }
+    .pill-medium { background: rgba(245,158,11,0.15); color: #fbbf24; }
+    .pill-low    { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .expand-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .expand-content.open { max-height: 800px; }
+    textarea { resize: none; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #18181b; }
+    ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+  <!-- ── Sidebar ──────────────────────────────────────────────── -->
+  <aside class="w-64 flex-shrink-0 bg-zinc-900 border-r border-zinc-800 flex flex-col px-5 py-6">
+    <div class="mb-8">
+      <div class="flex items-center gap-2 mb-1">
+        <div class="w-7 h-7 rounded bg-indigo-600 flex items-center justify-center">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <span class="text-white font-semibold text-base tracking-tight">LexGuard</span>
+      </div>
+      <p class="text-zinc-500 text-xs leading-relaxed">
+        Every contract is written by their lawyer.<br />This is yours.
+      </p>
+    </div>
+
+    <nav class="space-y-1 flex-1">
+      <div class="px-3 py-2 rounded-md bg-zinc-800 text-zinc-100 text-sm font-medium flex items-center gap-2">
+        <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+        </svg>
+        Analyze Contract
+      </div>
+    </nav>
+
+    <div class="border-t border-zinc-800 pt-4 mt-4">
+      <div class="flex items-center gap-2">
+        <div class="w-6 h-6 rounded-full bg-indigo-600 flex items-center justify-center text-xs font-bold text-white">A</div>
+        <div>
+          <p class="text-zinc-300 text-xs font-medium">Powered by</p>
+          <p class="text-zinc-500 text-xs">Gemini 2.5 Flash</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── Main ─────────────────────────────────────────────────── -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Top bar -->
+    <header class="bg-zinc-900 border-b border-zinc-800 px-8 py-4 flex items-center justify-between flex-shrink-0">
+      <div>
+        <h1 class="text-zinc-100 font-semibold text-base">Contract Analysis</h1>
+        <p class="text-zinc-500 text-xs">Upload or paste your contract to get started</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="btn-demo"
+          class="px-4 py-2 rounded-md border border-zinc-700 text-zinc-300 text-sm font-medium hover:bg-zinc-800 transition-colors flex items-center gap-2">
+          <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          Try Demo Contract
+        </button>
+        <button id="btn-new"
+          class="px-4 py-2 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium transition-colors hidden">
+          New Analysis
+        </button>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <div class="flex-1 overflow-y-auto px-8 py-6">
+
+      <!-- ── Upload screen ──────────────────────────────────────── -->
+      <div id="screen-upload">
+        <!-- API Key input -->
+        <div class="mb-5 bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+          <label class="block text-zinc-400 text-xs font-medium mb-2 uppercase tracking-wider">Gemini API Key</label>
+          <input id="api-key" type="password" placeholder="AIza..."
+            class="w-full bg-zinc-950 border border-zinc-700 rounded-md px-3 py-2 text-zinc-200 text-sm focus:outline-none focus:border-indigo-500 transition-colors" />
+          <p class="text-zinc-600 text-xs mt-1">Get yours free at aistudio.google.com → Get API Key. Never stored.</p>
+        </div>
+
+        <!-- Text input -->
+        <div class="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden mb-4">
+          <div class="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+            <span class="text-zinc-300 text-sm font-medium">Paste Contract Text</span>
+            <span class="text-zinc-600 text-xs">or upload PDF below</span>
+          </div>
+          <textarea id="contract-text" rows="14"
+            class="w-full bg-transparent px-4 py-3 text-zinc-300 text-sm focus:outline-none placeholder-zinc-700 leading-relaxed"
+            placeholder="Paste your employment contract, freelance agreement, ToS, or any legal document here..."></textarea>
+        </div>
+
+        <!-- PDF Upload -->
+        <div class="mb-6">
+          <label class="block text-zinc-500 text-xs font-medium mb-2 uppercase tracking-wider">Or Upload PDF</label>
+          <div id="pdf-drop"
+            class="border border-dashed border-zinc-700 rounded-lg px-6 py-6 text-center hover:border-zinc-600 transition-colors cursor-pointer">
+            <svg class="w-8 h-8 text-zinc-700 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+            </svg>
+            <p class="text-zinc-500 text-sm">Drop PDF here or <span class="text-indigo-400 cursor-pointer">browse</span></p>
+            <input id="pdf-input" type="file" accept=".pdf" class="hidden" />
+            <p id="pdf-filename" class="text-zinc-400 text-xs mt-2 hidden"></p>
+          </div>
+        </div>
+
+        <!-- Analyze button -->
+        <button id="btn-analyze"
+          class="w-full py-3 rounded-md bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm transition-colors flex items-center justify-center gap-2">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+          </svg>
+          Analyze Contract
+        </button>
+
+        <p id="error-msg" class="text-red-400 text-sm text-center mt-3 hidden"></p>
+      </div>
+
+      <!-- ── Loading screen ─────────────────────────────────────── -->
+      <div id="screen-loading" class="hidden flex flex-col items-center justify-center py-24">
+        <div class="mb-8">
+          <div class="w-12 h-12 rounded-full border-2 border-indigo-600 border-t-transparent animate-spin mx-auto mb-6"></div>
+          <div class="flex gap-2 justify-center mb-4">
+            <span class="loading-dot w-2 h-2 bg-indigo-500 rounded-full"></span>
+            <span class="loading-dot w-2 h-2 bg-indigo-500 rounded-full"></span>
+            <span class="loading-dot w-2 h-2 bg-indigo-500 rounded-full"></span>
+          </div>
+        </div>
+        <p id="loading-stage" class="text-zinc-200 text-lg font-medium mb-2">Extracting clauses...</p>
+        <p id="loading-sub" class="text-zinc-500 text-sm">Agent 1 — Parsing legal structure</p>
+        <div class="mt-8 w-80 bg-zinc-900 rounded-full h-1.5">
+          <div id="progress-bar" class="bg-indigo-600 h-1.5 rounded-full transition-all duration-700" style="width: 10%"></div>
+        </div>
+      </div>
+
+      <!-- ── Results dashboard ──────────────────────────────────── -->
+      <div id="screen-results" class="hidden">
+        <!-- Summary bar -->
+        <div class="bg-zinc-900 border border-zinc-800 rounded-lg px-6 py-4 mb-6 flex items-center gap-6 flex-wrap">
+          <div class="flex items-center gap-3">
+            <span class="text-zinc-400 text-sm font-medium">Risk Score</span>
+            <span id="risk-score-badge"
+              class="text-2xl font-bold text-white tabular-nums"></span>
+            <span class="text-zinc-600 text-lg font-medium">/ 100</span>
+          </div>
+          <div class="h-6 w-px bg-zinc-800 hidden sm:block"></div>
+          <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+              <span id="count-high" class="text-sm font-semibold text-zinc-200">0</span>
+              <span class="text-xs text-zinc-500">High risk</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+              <span id="count-medium" class="text-sm font-semibold text-zinc-200">0</span>
+              <span class="text-xs text-zinc-500">Medium</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+              <span id="count-low" class="text-sm font-semibold text-zinc-200">0</span>
+              <span class="text-xs text-zinc-500">Low</span>
+            </div>
+          </div>
+          <div class="ml-auto">
+            <div id="risk-meter" class="w-32 h-2 bg-zinc-800 rounded-full overflow-hidden">
+              <div id="risk-fill" class="h-full rounded-full transition-all duration-700"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clause cards -->
+        <div id="clause-list" class="space-y-3"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Demo contract data ────────────────────────────────────── -->
+  <script src="demo-contract.js"></script>
+
+  <!-- ── App logic ─────────────────────────────────────────────── -->
+  <script>
+  // ────────────────────────────────────────────────────────────────
+  // AGENT PROMPTS
+  // ────────────────────────────────────────────────────────────────
+  const AGENT1_PROMPT = `You are a contract clause extraction agent.
+Your task is to break a legal contract into individual clauses.
+You receive the full text of a legal document.
+You output a JSON array where each item has:
+  - id: sequential number starting from 1
+  - text: the original clause text (verbatim)
+  - type: one of [IP_Transfer, NDA, Non_Compete, Termination, Liability, Arbitration, Data_Privacy, Payment, Auto_Renewal, Other]
+  - section: the section heading if present, or null
+
+Constraints:
+  - Extract every clause, not just risky ones. Aim for 10-25 clauses.
+  - Keep clause text verbatim
+  - Group multi-sentence clauses if they form one legal concept
+  - Output ONLY valid JSON array, no commentary, no markdown fences
+  - If the document has fewer distinct clauses, extract what exists`;
+
+  const AGENT2_PROMPT = `You are a contract risk analysis agent protecting the signing party.
+Your task is to evaluate each clause for risk to the person SIGNING.
+You receive a JSON array of contract clauses.
+You output the SAME array with these fields ADDED to each item:
+  - severity: "HIGH" | "MEDIUM" | "LOW"
+  - risk_summary: one sentence in plain English, absolutely no legal jargon
+  - legal_reasoning: why this is risky, what standard practice looks like (2-3 sentences, cite real law where applicable)
+  - category_flags: array of zero or more values from ["financial_risk", "privacy_risk", "employment_risk", "ip_risk", "freedom_risk"]
+
+Severity definitions:
+  - HIGH = significant financial loss, restricted freedom, or valuable rights transfer
+  - MEDIUM = one-sided but common in the industry; worth knowing
+  - LOW = standard boilerplate clause with minimal risk
+
+Legal knowledge anchors (cite these when relevant — do NOT invent statute numbers):
+  - Non-competes: California Labor Code §925, FTC 2024 non-compete guidance
+  - IP ownership: 17 U.S.C. §101 (work-for-hire doctrine)
+  - Arbitration: EFAA (Ending Forced Arbitration Act 2022), FAA (Federal Arbitration Act)
+  - Data collection: GDPR Article 6 (lawful basis), CCPA §1798.100
+  - Non-disparagement: NLRA §7 protects concerted activity
+  - Auto-renewal: FTC Negative Option Rule
+  - If no specific anchor applies: cite the legal doctrine by name (e.g., "implied covenant of good faith and fair dealing")
+  - If genuinely uncertain: write "jurisdiction-dependent — consult local counsel"
+  - NEVER invent statute numbers or case citations
+
+Constraints:
+  - Score from the signer's perspective, not the drafter's
+  - Output ONLY valid JSON array with all original fields plus new fields, no commentary, no markdown fences`;
+
+  const AGENT3_PROMPT = `You are a contract negotiation advocate who fights for the signing party.
+Your task is to generate specific, actionable pushback for HIGH severity clauses ONLY.
+You receive a JSON array containing ONLY the HIGH severity clauses with full text and risk analysis.
+You output the SAME array with EXACTLY these 5 fields per item (no more, no fewer):
+  - severity: carry forward from input (will be "HIGH")
+  - risk_summary: carry forward from input (1 sentence plain English)
+  - what_it_costs_you: "If you sign this, you lose..." — 1-2 sentences, concrete real-world impact
+  - push_back: exact language to use — starts with "Ask them to..." and gives specific counter-language or specific cap/limit to request
+  - red_flag_label: punchy 2-4 word label for the UI badge (e.g., "Unlimited IP Grab", "No Exit Clause", "Forced Arbitration", "Hidden Auto-Renewal")
+
+Legal citation anchors (cite ONLY from these, never invent):
+  - Non-competes: California Labor Code §925, FTC 2024 guidance
+  - IP ownership: 17 U.S.C. §101 (work-for-hire doctrine)
+  - Arbitration: EFAA (2022), FAA
+  - Data collection: GDPR Article 6, CCPA §1798.100
+  - Non-disparagement: NLRA §7
+  - If no anchor applies: cite the doctrine name only (e.g., "implied covenant of good faith")
+  - If uncertain: "jurisdiction-dependent — consult local counsel"
+
+Hard constraints:
+  - EXACTLY 5 fields: severity, risk_summary, what_it_costs_you, push_back, red_flag_label
+  - DO NOT add any other fields — extra fields break the parser
+  - push_back must be a sentence the user can literally say or paste into an email
+  - Be specific: "ask for a 12-month geographic cap" not "negotiate the terms"
+  - red_flag_label must be 2-4 words, punchy, user-facing
+  - DO NOT invent statute numbers or case names outside the anchors above
+  - Output ONLY valid JSON array, no commentary, no markdown fences`;
+
+  // ────────────────────────────────────────────────────────────────
+  // GEMINI API CALL
+  // ────────────────────────────────────────────────────────────────
+  async function callGemini(apiKey, systemPrompt, userContent) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const body = {
+      system_instruction: { parts: [{ text: systemPrompt }] },
+      contents: [{ role: 'user', parts: [{ text: userContent }] }],
+      generationConfig: {
+        temperature: 0.1,
+        responseMimeType: 'application/json'
+      }
+    };
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `API error ${resp.status}`);
+    }
+    const data = await resp.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    try {
+      return JSON.parse(text);
+    } catch {
+      // Strip markdown fences if model added them anyway
+      const cleaned = text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
+      return JSON.parse(cleaned);
+    }
+  }
+
+  // PDF → base64 for Gemini inline data
+  async function pdfToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64 = reader.result.split(',')[1];
+        resolve(base64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function callGeminiWithPDF(apiKey, systemPrompt, pdfBase64) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    const body = {
+      system_instruction: { parts: [{ text: systemPrompt }] },
+      contents: [{
+        role: 'user',
+        parts: [
+          { inline_data: { mime_type: 'application/pdf', data: pdfBase64 } },
+          { text: 'Extract all clauses from this legal document.' }
+        ]
+      }],
+      generationConfig: { temperature: 0.1, responseMimeType: 'application/json' }
+    };
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `API error ${resp.status}`);
+    }
+    const data = await resp.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    try {
+      return JSON.parse(text);
+    } catch {
+      const cleaned = text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```$/i, '').trim();
+      return JSON.parse(cleaned);
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // RISK SCORE
+  // ────────────────────────────────────────────────────────────────
+  function computeRiskScore(clauses) {
+    const score = clauses.reduce((acc, c) => {
+      if (c.severity === 'HIGH')   return acc + 30;
+      if (c.severity === 'MEDIUM') return acc + 10;
+      return acc + 2;
+    }, 0);
+    return Math.min(100, score);
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // LOADING STATE TRANSITIONS
+  // ────────────────────────────────────────────────────────────────
+  function setLoadingStage(stage, sub, progress) {
+    document.getElementById('loading-stage').textContent = stage;
+    document.getElementById('loading-sub').textContent = sub;
+    document.getElementById('progress-bar').style.width = progress + '%';
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // MAIN ANALYSIS PIPELINE
+  // ────────────────────────────────────────────────────────────────
+  async function runAnalysis(contractText, pdfFile) {
+    const apiKey = document.getElementById('api-key').value.trim();
+    if (!apiKey) { showError('Enter your Gemini API key above.'); return; }
+
+    showScreen('loading');
+    hideError();
+
+    try {
+      // Agent 1 — Parse
+      setLoadingStage('Extracting clauses...', 'Agent 1 — Parsing legal structure', 10);
+      let clauses;
+      if (pdfFile) {
+        const pdfBase64 = await pdfToBase64(pdfFile);
+        clauses = await callGeminiWithPDF(apiKey, AGENT1_PROMPT, pdfBase64);
+      } else {
+        clauses = await callGemini(apiKey, AGENT1_PROMPT,
+          `Here is the contract text to parse:\n\n${contractText}`);
+      }
+      if (!Array.isArray(clauses)) throw new Error('Agent 1 returned unexpected format.');
+
+      // Agent 2 — Risk analysis
+      setLoadingStage('Analyzing risk...', `Agent 2 — Evaluating ${clauses.length} clauses`, 45);
+      const analyzed = await callGemini(apiKey, AGENT2_PROMPT, JSON.stringify(clauses));
+      if (!Array.isArray(analyzed)) throw new Error('Agent 2 returned unexpected format.');
+
+      // Agent 3 — Advocate (HIGH only)
+      const highClauses = analyzed.filter(c => c.severity === 'HIGH');
+      let advocated = [];
+      if (highClauses.length > 0) {
+        setLoadingStage('Building your defense...', `Agent 3 — Generating pushback for ${highClauses.length} high-risk clause${highClauses.length !== 1 ? 's' : ''}`, 75);
+        advocated = await callGemini(apiKey, AGENT3_PROMPT, JSON.stringify(highClauses));
+        if (!Array.isArray(advocated)) advocated = [];
+      }
+
+      setLoadingStage('Analysis complete.', 'Rendering dashboard...', 100);
+      await new Promise(r => setTimeout(r, 400));
+
+      // Merge advocate data back into full clause list
+      const advocateMap = {};
+      advocated.forEach((a, i) => {
+        const orig = highClauses[i];
+        if (orig) advocateMap[orig.id] = a;
+      });
+      const finalClauses = analyzed.map(c => {
+        if (c.severity === 'HIGH' && advocateMap[c.id]) {
+          return { ...c, ...advocateMap[c.id] };
+        }
+        return c;
+      });
+
+      renderDashboard(finalClauses);
+
+    } catch (err) {
+      showScreen('upload');
+      showError('Analysis failed: ' + err.message);
+    }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // RENDER DASHBOARD
+  // ────────────────────────────────────────────────────────────────
+  function renderDashboard(clauses) {
+    const score = computeRiskScore(clauses);
+    const high   = clauses.filter(c => c.severity === 'HIGH').length;
+    const medium = clauses.filter(c => c.severity === 'MEDIUM').length;
+    const low    = clauses.filter(c => c.severity === 'LOW').length;
+
+    document.getElementById('risk-score-badge').textContent = score;
+    document.getElementById('count-high').textContent   = high;
+    document.getElementById('count-medium').textContent = medium;
+    document.getElementById('count-low').textContent    = low;
+
+    // Risk fill color
+    const fill = document.getElementById('risk-fill');
+    fill.style.width = score + '%';
+    fill.className = 'h-full rounded-full transition-all duration-700 ' +
+      (score >= 70 ? 'bg-red-500' : score >= 40 ? 'bg-amber-500' : 'bg-green-500');
+
+    // Clause cards — HIGH first, then MEDIUM, then LOW
+    const sorted = [
+      ...clauses.filter(c => c.severity === 'HIGH'),
+      ...clauses.filter(c => c.severity === 'MEDIUM'),
+      ...clauses.filter(c => c.severity === 'LOW'),
+    ];
+
+    const list = document.getElementById('clause-list');
+    list.innerHTML = '';
+    sorted.forEach((clause, idx) => {
+      list.appendChild(buildClauseCard(clause, idx));
+    });
+
+    showScreen('results');
+    document.getElementById('btn-new').classList.remove('hidden');
+  }
+
+  function buildClauseCard(clause, idx) {
+    const sev = (clause.severity || 'LOW').toUpperCase();
+    const borderClass = sev === 'HIGH' ? 'border-high' : sev === 'MEDIUM' ? 'border-medium' : 'border-low';
+    const pillClass   = sev === 'HIGH' ? 'pill-high'   : sev === 'MEDIUM' ? 'pill-medium'   : 'pill-low';
+    const sevLabel    = sev === 'HIGH' ? 'High Risk'   : sev === 'MEDIUM' ? 'Medium Risk'   : 'Low Risk';
+
+    const card = document.createElement('div');
+    card.className = `bg-zinc-900 border border-zinc-800 border-l-4 ${borderClass} rounded-lg overflow-hidden card-enter`;
+    card.style.animationDelay = `${idx * 40}ms`;
+
+    // Truncate clause text
+    const clauseText = clause.text || '';
+    const preview = clauseText.length > 180 ? clauseText.slice(0, 180) + '…' : clauseText;
+
+    const redFlagBadge = clause.red_flag_label
+      ? `<span class="text-xs px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-medium">${escHtml(clause.red_flag_label)}</span>`
+      : '';
+
+    card.innerHTML = `
+      <div class="px-5 py-4 cursor-pointer" onclick="toggleCard(this)">
+        <div class="flex items-start justify-between gap-4 mb-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="text-xs px-2 py-0.5 rounded font-medium ${pillClass}">${sevLabel}</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-400">${escHtml(clause.type || 'Other')}</span>
+            ${redFlagBadge}
+          </div>
+          <svg class="w-4 h-4 text-zinc-600 flex-shrink-0 chevron transition-transform duration-200"
+            fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </div>
+        <p class="text-zinc-200 text-sm font-medium mb-1">${escHtml(clause.risk_summary || 'See clause details')}</p>
+        <p class="text-zinc-600 text-xs font-mono leading-relaxed line-clamp-2">${escHtml(preview)}</p>
+      </div>
+
+      <div class="expand-content">
+        <div class="px-5 pb-5 pt-1 border-t border-zinc-800 space-y-4">
+          ${sev === 'HIGH' ? buildHighDetail(clause) : buildLowDetail(clause)}
+        </div>
+      </div>
+    `;
+    return card;
+  }
+
+  function buildHighDetail(clause) {
+    return `
+      <div class="space-y-3">
+        ${clause.what_it_costs_you ? `
+          <div>
+            <p class="text-xs font-semibold text-red-400 uppercase tracking-wider mb-1">What this costs you</p>
+            <p class="text-zinc-300 text-sm leading-relaxed">${escHtml(clause.what_it_costs_you)}</p>
+          </div>` : ''}
+        ${clause.push_back ? `
+          <div class="bg-indigo-950/40 border border-indigo-800/40 rounded-md px-4 py-3">
+            <p class="text-xs font-semibold text-indigo-400 uppercase tracking-wider mb-2">How to push back</p>
+            <p class="text-zinc-200 text-sm leading-relaxed">${escHtml(clause.push_back)}</p>
+            <button onclick="copyToClipboard(this, ${JSON.stringify(clause.push_back || '')})"
+              class="mt-2 text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 transition-colors">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+              </svg>
+              Copy pushback language
+            </button>
+          </div>` : ''}
+        ${clause.legal_reasoning ? `
+          <div>
+            <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Legal reasoning</p>
+            <p class="text-zinc-500 text-xs leading-relaxed">${escHtml(clause.legal_reasoning)}</p>
+          </div>` : ''}
+        <div>
+          <p class="text-xs font-semibold text-zinc-600 uppercase tracking-wider mb-1">Clause text</p>
+          <p class="text-zinc-600 text-xs font-mono leading-relaxed">${escHtml(clause.text || '')}</p>
+        </div>
+      </div>`;
+  }
+
+  function buildLowDetail(clause) {
+    return `
+      <div class="space-y-3">
+        ${clause.legal_reasoning ? `
+          <div>
+            <p class="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">Why this matters</p>
+            <p class="text-zinc-400 text-sm leading-relaxed">${escHtml(clause.legal_reasoning)}</p>
+          </div>` : ''}
+        ${clause.category_flags && clause.category_flags.length > 0 ? `
+          <div>
+            <p class="text-xs font-semibold text-zinc-600 uppercase tracking-wider mb-1">Risk categories</p>
+            <div class="flex flex-wrap gap-1.5">
+              ${clause.category_flags.map(f => `<span class="text-xs px-2 py-0.5 rounded bg-zinc-800 text-zinc-500">${escHtml(f.replace(/_/g, ' '))}</span>`).join('')}
+            </div>
+          </div>` : ''}
+        <div>
+          <p class="text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-1">Clause text</p>
+          <p class="text-zinc-600 text-xs font-mono leading-relaxed">${escHtml(clause.text || '')}</p>
+        </div>
+      </div>`;
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // UI HELPERS
+  // ────────────────────────────────────────────────────────────────
+  function toggleCard(header) {
+    const content = header.nextElementSibling;
+    const chevron = header.querySelector('.chevron');
+    content.classList.toggle('open');
+    chevron.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : '';
+  }
+
+  function showScreen(name) {
+    ['upload', 'loading', 'results'].forEach(s => {
+      document.getElementById('screen-' + s).classList.toggle('hidden', s !== name);
+    });
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('error-msg');
+    el.textContent = msg;
+    el.classList.remove('hidden');
+  }
+
+  function hideError() {
+    document.getElementById('error-msg').classList.add('hidden');
+  }
+
+  function escHtml(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function copyToClipboard(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.innerHTML;
+      btn.textContent = 'Copied!';
+      setTimeout(() => { btn.innerHTML = orig; }, 1800);
+    });
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  // DEMO CONTRACT
+  // ────────────────────────────────────────────────────────────────
+  document.getElementById('btn-demo').addEventListener('click', () => {
+    if (typeof DEMO_RESULT === 'undefined') {
+      showError('Demo data not loaded. Make sure demo-contract.js is in the same folder.');
+      return;
+    }
+    renderDashboard(DEMO_RESULT);
+  });
+
+  // ────────────────────────────────────────────────────────────────
+  // ANALYZE BUTTON
+  // ────────────────────────────────────────────────────────────────
+  document.getElementById('btn-analyze').addEventListener('click', () => {
+    const text = document.getElementById('contract-text').value.trim();
+    const pdfFile = document.getElementById('pdf-input').files[0] || null;
+
+    if (!text && !pdfFile) {
+      showError('Paste contract text or upload a PDF to continue.');
+      return;
+    }
+    runAnalysis(text, pdfFile);
+  });
+
+  // ────────────────────────────────────────────────────────────────
+  // NEW ANALYSIS
+  // ────────────────────────────────────────────────────────────────
+  document.getElementById('btn-new').addEventListener('click', () => {
+    showScreen('upload');
+    document.getElementById('clause-list').innerHTML = '';
+    document.getElementById('contract-text').value = '';
+    document.getElementById('pdf-input').value = '';
+    document.getElementById('pdf-filename').classList.add('hidden');
+    document.getElementById('btn-new').classList.add('hidden');
+    hideError();
+  });
+
+  // ────────────────────────────────────────────────────────────────
+  // PDF UPLOAD UI
+  // ────────────────────────────────────────────────────────────────
+  const pdfDrop = document.getElementById('pdf-drop');
+  const pdfInput = document.getElementById('pdf-input');
+
+  pdfDrop.addEventListener('click', () => pdfInput.click());
+
+  pdfDrop.addEventListener('dragover', e => {
+    e.preventDefault();
+    pdfDrop.classList.add('border-indigo-600', 'bg-indigo-950/10');
+  });
+
+  pdfDrop.addEventListener('dragleave', () => {
+    pdfDrop.classList.remove('border-indigo-600', 'bg-indigo-950/10');
+  });
+
+  pdfDrop.addEventListener('drop', e => {
+    e.preventDefault();
+    pdfDrop.classList.remove('border-indigo-600', 'bg-indigo-950/10');
+    const file = e.dataTransfer.files[0];
+    if (file?.type === 'application/pdf') {
+      pdfInput.files = e.dataTransfer.files;
+      showPDFName(file.name);
+    }
+  });
+
+  pdfInput.addEventListener('change', () => {
+    const file = pdfInput.files[0];
+    if (file) showPDFName(file.name);
+  });
+
+  function showPDFName(name) {
+    const el = document.getElementById('pdf-filename');
+    el.textContent = '📄 ' + name;
+    el.classList.remove('hidden');
+  }
+  </script>
+</body>
+</html>

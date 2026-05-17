@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, "Fira Code", "Cascadia Code", monospace;
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  --ink: #0e0e0e;
+  --ink-2: #3a3a3a;
+  --ink-3: #6b6b6b;
+  --ink-4: #9b9b9b;
+  --paper: #f5f4f0;
+  --paper-2: #edece8;
+  --paper-3: #e2e0d9;
+  --void: #080808;
+  --void-2: #111110;
+  --void-3: #1c1c1a;
+  --accent: #5b48e8;
+  --accent-2: #7c6cf0;
+  --risk-red: #d93a2b;
+  --risk-amber: #c47a16;
+  --risk-green: #1a7a4a;
+  --grid-line: rgba(14, 14, 14, 0.06);
+  --grid-line-dark: rgba(255, 255, 255, 0.05);
+  --void-border: rgba(255, 255, 255, 0.08);
+  --void-border-hover: rgba(255, 255, 255, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Blueprint grid — paper sections */
+.grid-bg {
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Blueprint grid — dark sections */
+.grid-bg-dark {
+  background-image:
+    linear-gradient(var(--grid-line-dark) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line-dark) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Dashed borders */
+.dash { border-style: dashed; }
+
+/* Section index label */
+.section-idx {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--ink-4);
+}
+
+/* Mono tag */
+.tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 3px 8px;
+  border: 1px solid currentColor;
+  border-radius: 2px;
+  letter-spacing: 0.05em;
+}
+
+/* ASCII block */
+.ascii {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  line-height: 1.15;
+  letter-spacing: 0.05em;
+  user-select: none;
+  white-space: pre;
+  overflow: hidden;
+}
+
+/* Stroke draw animation */
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+
+.draw-path {
+  animation: draw 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.draw-path-slow {
+  animation: draw 2.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Fade up */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+
+/* Blink cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--accent);
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+  margin-left: 1px;
+}
+
+/* Scanning line */
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+/* Float gentle */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.float { animation: float 6s ease-in-out infinite; }
+
+/* Pulse dot */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--paper-2); }
+::-webkit-scrollbar-thumb { background: var(--paper-3); }
+
+/* Selection */
+::selection { background: rgba(91, 72, 232, 0.15); }
+
+/* Link underline */
+.link-line {
+  text-decoration: underline;
+  text-decoration-color: var(--ink-4);
+  text-underline-offset: 3px;
+}
+.link-line:hover { text-decoration-color: var(--ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

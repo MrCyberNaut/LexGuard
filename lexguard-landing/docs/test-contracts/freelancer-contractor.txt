@@ -1,0 +1,35 @@
+INDEPENDENT CONTRACTOR AGREEMENT
+
+This Independent Contractor Agreement ("Agreement") is made between DigitalAgency LLC ("Client") and the undersigned independent contractor ("Contractor").
+
+1. SERVICES
+Contractor agrees to perform design, development, and consulting services as requested by Client from time to time. Client may modify the scope of services at any time. Contractor agrees to perform additional work requested by Client at no additional charge if it is "reasonably related" to the original scope, as determined solely by Client.
+
+2. COMPENSATION AND PAYMENT TERMS
+Client agrees to pay Contractor the rate specified in the project brief. Invoices are payable within 90 days of Client's acceptance of work. Client reserves the sole right to determine whether work has been "accepted." Client may withhold payment if work does not meet Client's satisfaction, with no obligation to specify deficiencies within any particular timeframe.
+
+3. INTELLECTUAL PROPERTY — WORK FOR HIRE
+All work product, deliverables, designs, code, copy, and materials created by Contractor under this Agreement shall be considered works made for hire as defined under 17 U.S.C. §101, and all intellectual property rights shall vest solely in Client from the moment of creation. To the extent any work product is not deemed a work made for hire by operation of law, Contractor hereby irrevocably assigns all rights, title, and interest — including copyright, patent, trademark, and trade secret rights — to Client. Contractor retains no license to use, display, or reference the work in any portfolio without prior written consent from Client, which Client may withhold at its discretion.
+
+4. CONFIDENTIALITY
+Contractor agrees to keep all information received from Client — including business plans, client lists, pricing, and technical information — strictly confidential for a period of 5 years following the end of this Agreement. Contractor may not disclose the existence of this Agreement or the identity of Client without written permission.
+
+5. NON-COMPETE AND NON-SOLICITATION
+For 18 months following the end of this engagement, Contractor shall not provide services to any business operating in the same industry as Client. Contractor shall not directly or indirectly solicit or accept work from any of Client's clients, customers, or prospects that Contractor became aware of through this engagement, for a period of 24 months.
+
+6. INDEMNIFICATION
+Contractor agrees to indemnify, defend, and hold harmless Client from any and all claims, damages, losses, and expenses (including attorney's fees) arising out of or in connection with Contractor's services, whether or not caused by Contractor's negligence.
+
+7. LIMITATION OF LIABILITY FOR CLIENT
+Notwithstanding any other provision, Client's total liability to Contractor for any reason shall not exceed the fees paid in the 30 days preceding the claim. Client shall not be liable for any indirect, incidental, special, or consequential damages.
+
+8. TERMINATION
+Client may terminate this Agreement at any time, for any reason, with 24 hours notice. Upon termination, Contractor shall deliver all work in progress to Client, including source files and working files, and Client shall owe payment only for work formally accepted prior to termination, as determined by Client.
+
+9. DISPUTE RESOLUTION
+Any disputes shall be resolved through binding arbitration in Client's home jurisdiction. Contractor waives any right to bring claims in any other venue. Contractor waives the right to participate in any class or collective action.
+
+10. INDEPENDENT CONTRACTOR STATUS
+Contractor acknowledges independent contractor status and waives any claim to employee benefits, workers' compensation, unemployment insurance, or any other employee rights or protections.
+
+BY SIGNING, CONTRACTOR ACKNOWLEDGES HAVING READ AND AGREED TO ALL TERMS.
