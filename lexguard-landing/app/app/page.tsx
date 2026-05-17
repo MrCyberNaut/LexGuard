@@ -89,7 +89,12 @@ export default function AppPage() {
     <div className="flex flex-1 overflow-hidden" style={{ height: "100dvh" }}>
       {/* Sidebar — hidden during onboarding */}
       {view !== "onboarding" && (
-        <Sidebar user={user} onClear={handleClearUser} />
+        <Sidebar user={user} onClear={handleClearUser} onLoadHistory={(data, name) => {
+          setResult(data);
+          setFileName(name);
+          setOriginalText("");
+          setView("results");
+        }} />
       )}
 
       {/* Main content */}

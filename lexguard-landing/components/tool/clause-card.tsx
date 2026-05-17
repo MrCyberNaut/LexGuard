@@ -32,6 +32,7 @@ const SEVERITY_STYLES = {
 export function ClauseCard({ clause, index, isActive, onSelect }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [simplified, setSimplified] = useState(false);
   const sev = SEVERITY_STYLES[clause.severity];
   const hasAdvocate = isAdvocated(clause);
   const preview = clause.text.length > 200 ? clause.text.slice(0, 200) + "…" : clause.text;
@@ -181,17 +182,30 @@ export function ClauseCard({ clause, index, isActive, onSelect }: Props) {
             </div>
           )}
 
-          {/* Legal reasoning */}
+          {/* Legal reasoning with plain-English toggle */}
           {clause.legal_reasoning && (
             <div>
-              <p className="mono-label mb-1.5" style={{ color: "var(--ink-4)" }}>
-                Legal basis
-              </p>
+              <div className="flex items-center justify-between mb-1.5">
+                <p className="mono-label" style={{ color: "var(--ink-4)" }}>
+                  {simplified ? "Plain English" : "Legal basis"}
+                </p>
+                <button
+                  onClick={() => setSimplified((p) => !p)}
+                  className="mono-label px-1.5 py-0.5 rounded-sm transition-colors"
+                  style={{
+                    background: simplified ? "rgba(91,72,232,0.12)" : "rgba(255,255,255,0.04)",
+                    color: simplified ? "var(--accent-2)" : "var(--ink-3)",
+                    fontSize: "10px",
+                  }}
+                >
+                  {simplified ? "show legal text" : "explain simply"}
+                </button>
+              </div>
               <p
                 className="mono-code leading-relaxed"
                 style={{ color: "var(--ink-3)", fontSize: "11.5px" }}
               >
-                {clause.legal_reasoning}
+                {simplified ? clause.risk_summary : clause.legal_reasoning}
               </p>
             </div>
           )}
