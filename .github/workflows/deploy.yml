@@ -6,9 +6,9 @@ on:
       - main
 
 env:
-  PROJECT_ID: linear-stock-496607-g8
-  REGION: us-central1
-  SERVICE_NAME: lexguard-landing
+  PROJECT_ID: lexguard-ai-2026
+  REGION: europe-west1
+  SERVICE_NAME: lexguard
 
 jobs:
   deploy:
