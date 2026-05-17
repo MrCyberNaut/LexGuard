@@ -104,8 +104,29 @@ Every pushback statement MUST cite a real source:
 ### Architecture (Locked)
 3 sequential agents via Gemini 2.5 Flash:
 1. **Parser Agent** — extracts + classifies clauses into JSON
-2. **Risk Analyzer Agent** — severity scores with legal reasoning + source citations
-3. **Advocate Agent** — situation-aware pushback + ready-to-send email + fallback position
+2. **Risk Analyzer Agent** — severity scores with legal reasoning + anchor citations
+3. **Advocate Agent** — 5-field compressed output (severity, risk_summary, what_it_costs_you, push_back, red_flag_label)
+
+### Final Build Scope (Locked — do not expand)
+MUST: paste input + 3-agent pipeline + red/yellow/green card dashboard + risk score + staged loading + fallback demo JSON + Firebase deploy
+SHOULD: PDF upload, "explain like I'm not a lawyer" toggle, situation selector UI (visual only)
+CUT: negotiation emails, fallback branching, Google Search grounding, Firebase Functions proxy
+
+### Risk Score Formula
+HIGH×30 + MEDIUM×10 + LOW×2, capped at 100. Display in summary bar.
+
+### Staged Loading
+"Extracting clauses..." → "Analyzing risk..." → "Building your defense..." — CSS transitions between agent calls.
+
+### Fallback Demo JSON
+Pre-bake Uber ToS analysis in `lexguard/demo-contract.js`. "Try Demo Contract" button loads it instantly. Non-negotiable for pitch safety.
+
+### TODO (Deferred — not in hackathon build)
+- [ ] Google Search grounding on HIGH clauses only (selective, limits latency)
+- [ ] 3-tier citation: anchor → doctrine name → "consult local counsel"
+- [ ] Situation selector wired to Advocate Agent
+- [ ] Firebase Functions proxy to hide API key
+- [ ] Negotiation email drafts + "they said no" branching
 
 ### Anti-Hallucination Strategy
 - Each agent receives FULL clause text (not summaries) — no context loss

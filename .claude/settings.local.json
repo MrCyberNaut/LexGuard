@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude --version)",
+      "Bash(npm update *)",
+      "Bash(git init *)",
+      "Bash(echo \"node_modules/\")",
+      "Bash(echo \".env\")",
+      "Bash(echo \".env.local\")",
+      "Bash(echo \"*.key\")",
+      "Bash(echo \"graphify-out/\")"
+    ]
+  }
+}
