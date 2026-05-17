@@ -7,6 +7,8 @@ import { isAdvocated } from "@/lib/types";
 interface Props {
   clause: FinalClause;
   index: number;
+  isActive?: boolean;
+  onSelect?: (id: number) => void;
 }
 
 const SEVERITY_STYLES = {
@@ -27,7 +29,7 @@ const SEVERITY_STYLES = {
   },
 } as const;
 
-export function ClauseCard({ clause, index }: Props) {
+export function ClauseCard({ clause, index, isActive, onSelect }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
   const sev = SEVERITY_STYLES[clause.severity];
@@ -46,15 +48,19 @@ export function ClauseCard({ clause, index }: Props) {
       className="rounded-sm overflow-hidden transition-all"
       style={{
         background: "var(--void-2)",
-        border: `1px solid rgba(255,255,255,0.06)`,
+        border: `1px solid ${isActive ? "rgba(91,72,232,0.35)" : "rgba(255,255,255,0.06)"}`,
         borderLeft: `3px solid ${sev.border}`,
         animationDelay: `${index * 30}ms`,
+        boxShadow: isActive ? "0 0 0 1px rgba(91,72,232,0.2)" : undefined,
       }}
     >
       {/* Card header — always visible */}
       <button
         className="w-full text-left px-4 py-3.5 flex items-start gap-3"
-        onClick={() => setExpanded((p) => !p)}
+        onClick={() => {
+          setExpanded((p) => !p);
+          onSelect?.(clause.id);
+        }}
       >
         {/* Index */}
         <span

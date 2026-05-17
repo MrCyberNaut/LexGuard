@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { createHash } from "crypto";
 import { headers } from "next/headers";
-import { supabaseAdmin } from "@/lib/supabase";
+import { db } from "@/lib/firebase";
 
 const schema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -27,16 +27,25 @@ export async function submitWaitlist(
   const ipHash = ip ? createHash("sha256").update(ip).digest("hex") : null;
   const ua = headersList.get("user-agent") ?? null;
 
-  const { error } = await supabaseAdmin.from("waitlist").insert({
-    email: parsed.data.email,
-    source: parsed.data.source,
-    user_agent: ua,
-    ip_hash: ipHash,
-  });
+  try {
+    // Check if email already exists
+    const snapshot = await db.collection("waitlist").where("email", "==", parsed.data.email).limit(1).get();
+    
+    // Duplicate email → treat as success (silent)
+    if (!snapshot.empty) return { success: true };
 
-  // Duplicate email → treat as success (silent)
-  if (error?.code === "23505") return { success: true };
-  if (error) return { success: false, error: "Could not save. Try again." };
+    // Save to Google Firestore
+    await db.collection("waitlist").add({
+      email: parsed.data.email,
+      source: parsed.data.source,
+      user_agent: ua,
+      ip_hash: ipHash,
+      created_at: new Date()
+    });
 
-  return { success: true };
+    return { success: true };
+  } catch (error) {
+    console.error("Firebase Waitlist Error:", error);
+    return { success: false, error: "Could not save. Try again." };
+  }
 }

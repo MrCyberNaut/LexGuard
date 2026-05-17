@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   // /app is handled by app/app/page.tsx — no rewrite needed
   experimental: {
     serverActions: {

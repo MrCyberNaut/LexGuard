@@ -6,7 +6,7 @@ import { computeRiskScore, countBySeverity, sortBySeverity } from "@/lib/risk-sc
 import type { AnalyzeResponse } from "@/lib/types";
 
 interface Props {
-  onResult: (result: AnalyzeResponse, fileName: string) => void;
+  onResult: (result: AnalyzeResponse, fileName: string, originalText?: string) => void;
   onLoading: (stage: string, sub: string, progress: number) => void;
   onError: (msg: string) => void;
   userRole?: "employee" | "freelancer" | "founder" | "other";
@@ -76,7 +76,7 @@ export function UploadPanel({ onResult, onLoading, onError, userRole }: Props) {
       const data = (await res.json()) as AnalyzeResponse;
       await new Promise((r) => setTimeout(r, 350)); // let the 100% state render briefly
 
-      onResult(data, pdfFile?.name ?? "contract.txt");
+      onResult(data, pdfFile?.name ?? "contract.txt", pdfFile ? undefined : text);
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Analysis failed.";
       onError(msg);

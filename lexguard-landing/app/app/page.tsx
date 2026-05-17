@@ -26,6 +26,7 @@ export default function AppPage() {
   });
   const [result, setResult] = useState<AnalyzeResponse | null>(null);
   const [fileName, setFileName] = useState("");
+  const [originalText, setOriginalText] = useState("");
   const [error, setError] = useState("");
 
   // Restore user from localStorage on mount
@@ -63,9 +64,10 @@ export default function AppPage() {
     setError("");
   }, []);
 
-  const handleResult = useCallback((data: AnalyzeResponse, name: string) => {
+  const handleResult = useCallback((data: AnalyzeResponse, name: string, text?: string) => {
     setResult(data);
     setFileName(name);
+    setOriginalText(text ?? "");
     setView("results");
     setError("");
   }, []);
@@ -78,6 +80,7 @@ export default function AppPage() {
   const handleNewAnalysis = useCallback(() => {
     setResult(null);
     setFileName("");
+    setOriginalText("");
     setError("");
     setView("upload");
   }, []);
@@ -143,6 +146,7 @@ export default function AppPage() {
           <Dashboard
             result={result}
             fileName={fileName}
+            originalText={originalText}
             onNewAnalysis={handleNewAnalysis}
           />
         )}
