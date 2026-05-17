@@ -210,6 +210,34 @@ export function ClauseCard({ clause, index, isActive, onSelect }: Props) {
             </div>
           )}
 
+          {/* Grounding sources */}
+          {clause.sources && clause.sources.length > 0 && (
+            <div>
+              <p className="mono-label mb-1.5" style={{ color: "var(--ink-4)" }}>
+                Sources
+              </p>
+              <div className="space-y-1">
+                {clause.sources.map((s, i) => (
+                  <a
+                    key={i}
+                    href={s.uri}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 mono-label transition-colors"
+                    style={{ color: "var(--accent-2)", fontSize: "10px" }}
+                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--paper-2)")}
+                    onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--accent-2)")}
+                  >
+                    <svg width="9" height="9" viewBox="0 0 9 9" fill="none" style={{ flexShrink: 0 }}>
+                      <path d="M1.5 4.5H7.5M5 2L7.5 4.5L5 7" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    {s.title || new URL(s.uri).hostname}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Full clause text */}
           <div>
             <p className="mono-label mb-1.5" style={{ color: "var(--ink-4)" }}>

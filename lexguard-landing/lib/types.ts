@@ -29,12 +29,18 @@ export interface ParsedClause {
   section: string | null;
 }
 
+export interface GroundingSource {
+  uri: string;
+  title: string;
+}
+
 // Agent 2 output (extends Agent 1)
 export interface AnalyzedClause extends ParsedClause {
   severity: Severity;
   risk_summary: string;
   legal_reasoning: string;
   category_flags: CategoryFlag[];
+  sources?: GroundingSource[]; // Google Search grounding citations
 }
 
 // Agent 3 output (advocate fields merged onto HIGH clauses)

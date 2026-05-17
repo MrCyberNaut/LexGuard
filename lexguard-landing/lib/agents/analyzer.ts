@@ -1,4 +1,4 @@
-import type { ParsedClause, AnalyzedClause, Severity, CategoryFlag } from "@/lib/types";
+import type { ParsedClause, AnalyzedClause, Severity, CategoryFlag, GroundingSource } from "@/lib/types";
 
 export const ANALYZER_SYSTEM_PROMPT = `You are a contract risk analysis agent. Your job is to protect the person SIGNING this contract.
 
@@ -31,7 +31,11 @@ Constraints:
 const VALID_SEVERITIES: Severity[] = ["HIGH", "MEDIUM", "LOW"];
 const VALID_FLAGS: CategoryFlag[] = ["financial_risk", "privacy_risk", "employment_risk", "ip_risk", "freedom_risk"];
 
-export function validateAnalyzerOutput(raw: unknown, parsed: ParsedClause[]): AnalyzedClause[] {
+export function validateAnalyzerOutput(
+  raw: unknown,
+  parsed: ParsedClause[],
+  sources?: GroundingSource[]
+): AnalyzedClause[] {
   if (!Array.isArray(raw)) throw new Error("Agent 2: expected JSON array");
   if (raw.length !== parsed.length) throw new Error(`Agent 2: expected ${parsed.length} items, got ${raw.length}`);
   return raw.map((item, i) => {
@@ -49,6 +53,7 @@ export function validateAnalyzerOutput(raw: unknown, parsed: ParsedClause[]): An
       risk_summary: c.risk_summary as string,
       legal_reasoning: (c.legal_reasoning as string) ?? "",
       category_flags: flags,
+      ...(sources && sources.length > 0 ? { sources } : {}),
     } satisfies AnalyzedClause;
   });
 }

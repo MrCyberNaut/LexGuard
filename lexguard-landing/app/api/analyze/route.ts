@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 // Vercel free: 60s max. Pro: up to 300s. Gemini on large docs can take 20–30s.
 export const maxDuration = 60;
-import { callGemini } from "@/lib/gemini";
+import { callGemini, callGeminiWithGrounding } from "@/lib/gemini";
 import { PARSER_SYSTEM_PROMPT, validateParserOutput } from "@/lib/agents/parser";
 import { ANALYZER_SYSTEM_PROMPT, validateAnalyzerOutput } from "@/lib/agents/analyzer";
 import { buildAdvocatePrompt, validateAdvocateOutput } from "@/lib/agents/advocate";
@@ -30,12 +30,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<AnalyzeResult
     const raw1 = await callGemini(PARSER_SYSTEM_PROMPT, agent1Parts);
     const parsed = validateParserOutput(raw1);
 
-    // ── Agent 2: Risk Analysis ──────────────────────────────────
-    const raw2 = await callGemini(
+    // ── Agent 2: Risk Analysis (grounded with Google Search) ───
+    const { json: raw2, sources } = await callGeminiWithGrounding(
       ANALYZER_SYSTEM_PROMPT,
       [{ text: JSON.stringify(parsed) }]
     );
-    const analyzed = validateAnalyzerOutput(raw2, parsed);
+    const analyzed = validateAnalyzerOutput(raw2, parsed, sources);
 
     // ── Agent 3: Advocate (HIGH clauses only) ───────────────────
     const highClauses = analyzed.filter((c) => c.severity === "HIGH");
