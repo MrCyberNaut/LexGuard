@@ -28,9 +28,9 @@ describe("validateParserOutput", () => {
     expect(() => validateParserOutput([{ id: 1, text: "  ", type: "Other", section: null }])).toThrow("missing text");
   });
 
-  it("defaults unknown type to Other", () => {
+  it("passes through unrecognized type values as-is (no server-side validation)", () => {
     const result = validateParserOutput([{ id: 1, text: "Test clause.", type: "UnknownType", section: null }]);
-    expect(result[0].type).toBe("Other");
+    expect(result[0].type).toBe("UnknownType");
   });
 
   it("handles null section", () => {
