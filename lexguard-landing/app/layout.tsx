@@ -36,7 +36,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-sans`}>
         {children}
-        <GoogleAnalytics gaId="G-HACKATHON_DEMO" />
+        <GoogleAnalytics gaId="G-07T925LWDW" />
       </body>
     </html>
   );
