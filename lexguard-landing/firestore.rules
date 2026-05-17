@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // analyses collection — public write (no auth in hackathon), read by sessionId only
+    match /analyses/{docId} {
+      allow write: if true;
+      allow read: if true;
+    }
+  }
+}

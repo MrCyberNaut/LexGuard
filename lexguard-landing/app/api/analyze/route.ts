@@ -7,12 +7,13 @@ import { PARSER_SYSTEM_PROMPT, validateParserOutput } from "@/lib/agents/parser"
 import { ANALYZER_SYSTEM_PROMPT, validateAnalyzerOutput } from "@/lib/agents/analyzer";
 import { buildAdvocatePrompt, validateAdvocateOutput } from "@/lib/agents/advocate";
 import { computeRiskScore, countBySeverity, sortBySeverity } from "@/lib/risk-score";
+import { saveAnalysis } from "@/lib/history";
 import type { AnalyzeRequest, AnalyzeResult, FinalClause } from "@/lib/types";
 
 export async function POST(req: NextRequest): Promise<NextResponse<AnalyzeResult>> {
   try {
     const body = (await req.json()) as AnalyzeRequest;
-    const { text, pdfBase64, userRole } = body;
+    const { text, pdfBase64, userRole, userId, userName, fileName: bodyFileName } = body;
 
     if (!text && !pdfBase64) {
       return NextResponse.json({ error: "Provide text or pdfBase64" }, { status: 400 });
@@ -59,6 +60,20 @@ export async function POST(req: NextRequest): Promise<NextResponse<AnalyzeResult
     const sorted = sortBySeverity(finalClauses);
     const riskScore = computeRiskScore(sorted);
     const counts = countBySeverity(sorted);
+
+    // Fire-and-forget Firestore history save — never blocks the response
+    if (userId) {
+      saveAnalysis({
+        userId,
+        userName: userName ?? "Anonymous",
+        userRole: userRole ?? "other",
+        fileName: bodyFileName ?? "contract.txt",
+        riskScore,
+        counts,
+        clauses: sorted,
+        analyzedAt: Date.now(),
+      });
+    }
 
     return NextResponse.json({ clauses: sorted, riskScore, counts });
   } catch (err) {

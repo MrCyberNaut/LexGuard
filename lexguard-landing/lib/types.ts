@@ -57,6 +57,8 @@ export interface AnalyzeRequest {
   pdfBase64?: string;
   fileName?: string;
   userRole?: "employee" | "freelancer" | "founder" | "other";
+  userId?: string;
+  userName?: string;
 }
 
 export interface AnalyzeResponse {

@@ -10,9 +10,11 @@ interface Props {
   onLoading: (stage: string, sub: string, progress: number) => void;
   onError: (msg: string) => void;
   userRole?: "employee" | "freelancer" | "founder" | "other";
+  userId?: string;
+  userName?: string;
 }
 
-export function UploadPanel({ onResult, onLoading, onError, userRole }: Props) {
+export function UploadPanel({ onResult, onLoading, onError, userRole, userId, userName }: Props) {
   const [text, setText] = useState("");
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -49,6 +51,8 @@ export function UploadPanel({ onResult, onLoading, onError, userRole }: Props) {
         body.text = text;
       }
       if (userRole) body.userRole = userRole;
+      if (userId) body.userId = userId;
+      if (userName) body.userName = userName;
 
       onLoading("Extracting clauses...", "Agent 1 — parsing legal structure", 15);
       // Simulate stage transitions while API is running

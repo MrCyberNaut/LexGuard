@@ -131,6 +131,8 @@ export default function AppPage() {
             onLoading={handleLoading}
             onError={handleError}
             userRole={user?.role}
+            userId={user?.email}
+            userName={user?.name}
           />
         )}
 
