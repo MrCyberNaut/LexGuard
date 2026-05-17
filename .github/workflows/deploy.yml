@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  PROJECT_ID: lexguard-ai-2026
+  PROJECT_ID: linear-stock-496607-g8
   REGION: europe-west1
   SERVICE_NAME: lexguard
 
